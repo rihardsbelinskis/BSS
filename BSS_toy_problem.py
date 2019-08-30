@@ -6,13 +6,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
 from sklearn.decomposition import FastICA, PCA
-
 """
 ===============================================================
 A toy problem for Blind Signal Separation using FastICA and FFT
 ===============================================================
 """
-
 # Generate the total (time-based) signal
 n_sampled = 1000
 time = np.linspace(0,10, n_sampled)
@@ -44,7 +42,7 @@ print("Created total signal...")
 # Separating signals
 s1_sep = tot_signal[:int(len(tot_signal)/2)]
 s2_sep = tot_signal[int(len(tot_signal)/2):int(len(tot_signal))]
-print("Separated into 2 signals...")
+print("Separated total signal into 2 signals...")
 
 ### Lacks data parsing for a correct format, but once there... ###
 S1 = np.c_[comp_1_1, comp_1_2, comp_1_3] # inserting s1_sep
@@ -66,7 +64,7 @@ ica2 = FastICA(n_components=4)
 
 S1_ = ica1.fit_transform(X1)
 S2_ = ica2.fit_transform(X2)
-print("Computed ICA...")
+print("Computed ICA of signal 1 and signal 2...")
 
 # Performing FFT
 NFFT = len(s1_sep)
@@ -80,7 +78,29 @@ S2_FFT_noica = scipy.fftpack.fft(s2_sep)
 XFFT_noica = np.fft.fftfreq(n_sampled, time[1] - time[0])
 XFFT_noica = XFFT_noica[:int(len(XFFT_noica)/2)]
 XFFT = np.fft.fftfreq(len(S1_FFT), time[1] - time[0])
-print("Calculated FFT...")
+print("Computed FFT of signal 1 and signal 2...")
+
+# Performing ICA, and FFT of the entire signal (not separating)
+S3 = np.c_[comp_1_1, comp_1_2, comp_1_3, comp_2_1, comp_2_2, comp_2_3, comp_2_4]
+S3 /= S3.std(axis=0)
+
+A3 = np.array([[1, 1, 1, 1, 1, 1, 1],[7, 6, 5, 4, 3, 2, 1],[2.5, 3.5, 1.0, 4.5, 5.0, 3.0, 1.5],[6, 5, 1.5, 2.5, 1, 4.5, 4.0],[1, 5, 7, 2, 3, 5, 4.5],[0.5, 1.5, 2.5, 7, 6.5, 6, 4],[7, 3, 3.5, 1, 5.5, 1.5, 6]])
+X3 = np.dot(S3, A3.T)
+ica3 = FastICA(n_components=7)
+S3_ = ica3.fit_transform(X3)
+print("Computed ICA of total signal...")
+
+NFFT_tot = len(tot_signal)
+NFFT_tot_pow = 2**(math.ceil(math.log(abs(NFFT_tot),2)))
+
+S3_FFT = scipy.fftpack.fft(S3_)
+S3_FFT_noica = scipy.fftpack.fft(tot_signal)
+
+XFFT_tot = np.fft.fftfreq(len(S3_FFT), time[1] - time[0])
+XFFT_tot_noica = scipy.fftpack.fftfreq(len(tot_signal), time[1] - time[0])
+#XFFT_tot_noica = XFFT_tot_noica[:int(len(XFFT_tot_noica)/2)]
+print("Computed FFT of total signal...")
+
 # Comparing (norm)
 
 # Writing FFT data to file
@@ -97,6 +117,7 @@ print("Calculated FFT...")
 # ========================================================
 # Plotting signals...
 #print("Plotting on screen...")
+
 #plt.figure(1),
 #plt.subplot(3,1,1)
 #plt.plot(time, tot_signal)
@@ -166,6 +187,33 @@ print("Calculated FFT...")
 #plt.subplot(2,1,2)
 #plt.plot(XFFT, abs(S2_FFT))
 #plt.title('Signal 2 after ICA and FFT')
+#plt.xlabel('Frequency [Hz]')
+#plt.ylabel('Amplitude [-]')
+#
+#plt.figure(5),
+#models = [X3, S3_]
+#names = ['Observed total signal (no separation)',
+#         'ICA recovered signals within total signal']
+#colors = ['red', 'steelblue', 'green', 'yellow', 'orange', 'brown', 'purple']
+#
+#for ii, (model, name) in enumerate(zip(models, names), 1):
+#    plt.subplot(2, 1, ii)
+#    plt.title(name)
+#    for sig, color in zip(model.T, colors):
+#        plt.plot(time, sig, color=color)
+#
+#plt.subplots_adjust(0.09, 0.04, 0.94, 0.94, 0.26, 0.46)
+#plt.ylabel('Amplitude [-]')
+#
+#plt.figure(6),
+#plt.plot(XFFT_tot_noica, abs(S3_FFT_noica))
+#plt.title('Total signal after FFT (no ICA)')
+#plt.xlabel('Frequency [Hz]')
+#plt.ylabel('Amplitude [-]')
+#
+#plt.figure(7),
+#plt.plot(XFFT_tot, abs(S3_FFT))
+#plt.title('Total signal after ICA and FFT')
 #plt.xlabel('Frequency [Hz]')
 #plt.ylabel('Amplitude [-]')
 #
