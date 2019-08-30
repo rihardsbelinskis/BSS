@@ -28,8 +28,8 @@ n_samples = 2000
 time = np.linspace(0, 8, n_samples)
 
 s1 = np.sin(2 * time)  # Signal 1 : sinusoidal signal
-s2 = np.sign(np.sin(3 * time))  # Signal 2 : square signal
-s3 = signal.sawtooth(2 * np.pi * time)  # Signal 3: saw tooth signal
+s2 = np.cos(2 * 5 * time)  # Signal 2 : square signal
+s3 = np.sin(2 * 50 * time)  # Signal 3: saw tooth signal
 
 S = np.c_[s1, s2, s3]
 S += 0.2 * np.random.normal(size=S.shape)  # Add noise
@@ -57,15 +57,14 @@ H = pca.fit_transform(X)  # Reconstruct signals based on orthogonal components
 
 plt.figure()
 
-models = [X, S, S_, H]
-names = ['Observations (mixed signal)',
-         'True Sources',
+models = [X, S_, H]
+names = ['Observed signal 1 (mixed signal)',
          'ICA recovered signals', 
          'PCA recovered signals']
 colors = ['red', 'steelblue', 'orange']
 
 for ii, (model, name) in enumerate(zip(models, names), 1):
-    plt.subplot(4, 1, ii)
+    plt.subplot(3, 1, ii)
     plt.title(name)
     for sig, color in zip(model.T, colors):
         plt.plot(sig, color=color)
