@@ -39,12 +39,12 @@ comp_2_4 = np.sin(2*f24*time)
 signal_1 = comp_1_1 + comp_1_2 + comp_1_3 
 signal_2 = comp_2_1 + comp_2_2 + comp_2_3 + comp_2_4
 tot_signal = np.piecewise(time, [time < 5, time >= 5], [signal_1[:500], signal_2[:500]])
+print("Created total signal...")
 
-print("Created total signal")
 # Separating signals
 s1_sep = tot_signal[:int(len(tot_signal)/2)]
 s2_sep = tot_signal[int(len(tot_signal)/2):int(len(tot_signal))]
-print("Separated into 2 signals")
+print("Separated into 2 signals...")
 
 ### Lacks data parsing for a correct format, but once there... ###
 S1 = np.c_[comp_1_1, comp_1_2, comp_1_3] # inserting s1_sep
@@ -66,6 +66,7 @@ ica2 = FastICA(n_components=4)
 
 S1_ = ica1.fit_transform(X1)
 S2_ = ica2.fit_transform(X2)
+print("Computed ICA...")
 
 # Performing FFT
 NFFT = len(s1_sep)
@@ -79,7 +80,7 @@ S2_FFT_noica = scipy.fftpack.fft(s2_sep)
 XFFT_noica = np.fft.fftfreq(n_sampled, time[1] - time[0])
 XFFT_noica = XFFT_noica[:int(len(XFFT_noica)/2)]
 XFFT = np.fft.fftfreq(len(S1_FFT), time[1] - time[0])
-
+print("Calculated FFT...")
 # Comparing (norm)
 
 # Writing FFT data to file
@@ -91,9 +92,11 @@ XFFT = np.fft.fftfreq(len(S1_FFT), time[1] - time[0])
 #f.seek(0)
 #f.write(str(S1_))
 #f.close()
+#print("Written ICA params to a file...")
 
 # ========================================================
 # Plotting signals...
+#print("Plotting on screen...")
 #plt.figure(1),
 #plt.subplot(3,1,1)
 #plt.plot(time, tot_signal)
