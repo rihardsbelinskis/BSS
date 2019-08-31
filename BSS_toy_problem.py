@@ -194,19 +194,6 @@ S3_v7_FFT = scipy.fftpack.fft(S3_7_all)
 
 XFFT_s3 = np.fft.fftfreq(len(S3_v1_FFT), time[1] - time[0])
 
-# Comparing (norm)
-
-# Writing FFT data to file
-#pd.options.display.max_rows = 6000
-#print(S1_FFT[:len(S1_FFT)])
-
-#fileName = "S1-ICA-params.txt"
-#f = open(fileName, 'w')
-#f.seek(0)
-#f.write(str(S1_))
-#f.close()
-#print("Written ICA params to a file...")
-
 # =====================PLOTTING===========================
 # Plotting signals...
 #print("Plotting on screen...")
